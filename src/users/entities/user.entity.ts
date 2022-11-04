@@ -1,4 +1,12 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
+import {
+    BeforeInsert,
+    BeforeUpdate,
+    Column,
+    Entity,
+    FindManyOptions,
+    FindOneOptions,
+    PrimaryGeneratedColumn
+} from 'typeorm'
 import * as bcrypt from 'bcryptjs'
 
 @Entity('users')
@@ -20,3 +28,6 @@ export class User {
         }
     }
 }
+
+export type UserQueryOne = FindOneOptions<User>
+export type UserQueryMany = FindManyOptions<User>
