@@ -1,4 +1,19 @@
 {
+  "trailingComma": "all",
+  "arrowParens": "avoid",
   "singleQuote": true,
-  "trailingComma": "all"
+  "importOrder": [
+    "^~/components/(.*)$",
+    "<THIRD_PARTY_MODULES>",
+    "^~/lib/(.*)$",
+    "^~/utils/(.*)$",
+    "^[./]"
+  ],
+  "semi": false,
+  "importOrderSeparation": true,
+  "useTabs": false,
+  "printWidth": 120,
+  "tabWidth": 4,
+  "bracketSpacing": true,
+  "bracketSameLine": false
 }

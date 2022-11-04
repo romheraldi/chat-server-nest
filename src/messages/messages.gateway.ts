@@ -1,43 +1,38 @@
-import {
-  WebSocketGateway,
-  SubscribeMessage,
-  MessageBody,
-  WebSocketServer,
-} from '@nestjs/websockets';
-import { MessagesService } from './messages.service';
-import { CreateMessageDto } from './dto/create-message.dto';
-import { Server, Socket } from 'socket.io';
+import { MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets'
+import { MessagesService } from './messages.service'
+import { CreateMessageDto } from './dto/create-message.dto'
+import { Server } from 'socket.io'
 
 @WebSocketGateway({
-  cors: {
-    origin: '*',
-  },
+    cors: {
+        origin: '*',
+    },
 })
 export class MessagesGateway {
-  @WebSocketServer()
-  server: Server;
+    @WebSocketServer()
+    server: Server
 
-  constructor(private readonly messagesService: MessagesService) {}
+    constructor(private readonly messagesService: MessagesService) {}
 
-  @SubscribeMessage('createMessage')
-  async create(@MessageBody() createMessageDto: CreateMessageDto) {
-    const message = await this.messagesService.create(createMessageDto);
-    this.server.emit('message', message);
-    return message;
-  }
+    @SubscribeMessage('createMessage')
+    async create(@MessageBody() createMessageDto: CreateMessageDto) {
+        const message = await this.messagesService.create(createMessageDto)
+        this.server.emit('message', message)
+        return message
+    }
 
-  @SubscribeMessage('findAllMessages')
-  findAll() {
-    return this.messagesService.findAll();
-  }
+    @SubscribeMessage('findAllMessages')
+    findAll() {
+        return this.messagesService.findAll()
+    }
 
-  @SubscribeMessage('join')
-  joinRoom() {
-    // TODO
-  }
+    @SubscribeMessage('join')
+    joinRoom() {
+        // TODO
+    }
 
-  @SubscribeMessage('typing')
-  async typing() {
-    // TODO
-  }
+    @SubscribeMessage('typing')
+    async typing() {
+        // TODO
+    }
 }
