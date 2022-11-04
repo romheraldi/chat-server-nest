@@ -8,6 +8,7 @@ import { Repository } from 'typeorm'
 export class UsersService {
     constructor(@InjectRepository(User) private repository: Repository<User>) {}
     async create(dto: CreateUserDto) {
+        console.log(dto)
         const usernameExist = await this.findOne({
             where: [{ username: dto.username }],
         })
@@ -24,14 +25,10 @@ export class UsersService {
     }
 
     async findOne(query?: UserQueryOne) {
-        query = query || {}
-        query.where = { ...query?.where }
-        return await this.repository.find(query)
+        return await this.repository.findOne(query)
     }
 
     async findOneOrFail(query?: UserQueryOne) {
-        query = query || {}
-        query.where = { ...query?.where }
-        return await this.repository.findOneOrFail(query)
+        return this.repository.findOneOrFail(query)
     }
 }

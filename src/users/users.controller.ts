@@ -3,7 +3,9 @@ import { UsersService } from './users.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { responseJson } from '../utils/responseJson'
 
-@Controller('users')
+@Controller({
+    path: 'users',
+})
 export class UsersController {
     constructor(private readonly service: UsersService) {}
 
