@@ -11,7 +11,7 @@ export class UsersController {
     @HttpCode(HttpStatus.CREATED)
     async register(@Body() dto: CreateUserDto) {
         const data = await this.service.create(dto)
-        return responseJson(data, HttpStatus.CREATED)
+        return responseJson(data, HttpStatus.CREATED, 'User created successfully')
     }
 
     @Get()
