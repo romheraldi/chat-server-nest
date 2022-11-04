@@ -1,9 +1,9 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, UseGuards, Request } from '@nestjs/common'
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, UseGuards, Request, Res } from '@nestjs/common'
 import { UsersService } from './users.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { responseJson } from '../utils/responseJson'
 import { LocalAuthGuard } from '../authentication/local-auth.guard'
-import {JwtAuthGuard} from "../authentication/jwt-auth.guard";
+import { JwtAuthGuard } from '../authentication/jwt-auth.guard'
 
 @Controller({
     path: 'users',
@@ -20,8 +20,15 @@ export class UsersController {
 
     @UseGuards(LocalAuthGuard)
     @Post('login')
-    async login(@Request() req) {
+    async login(@Request() req, @Res({ passthrough: true }) res) {
         const accessToken = await this.service.login(req.user)
+
+        const secretData = {
+            token: accessToken.access_token,
+            refreshToken: '',
+        }
+
+        res.cookie('nekot', secretData, { httpOnly: true })
         return responseJson(accessToken)
     }
 
