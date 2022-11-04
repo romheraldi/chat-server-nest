@@ -9,11 +9,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         super({
             jwtFromRequest: ExtractJwt.fromExtractors([
                 (request: Request) => {
-                    const data = request?.cookies['nekot'] || { token: request?.header('x-auth') }
+                    const data = request?.cookies['nekot'] || request?.header('x-auth')
                     if (!data) {
                         return null
                     }
-                    return data.token
+                    return data
                 },
             ]),
             ignoreExpiration: false,

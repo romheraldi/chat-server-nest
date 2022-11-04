@@ -4,6 +4,7 @@ import { CreateUserDto } from './dto/create-user.dto'
 import { responseJson } from '../utils/responseJson'
 import { LocalAuthGuard } from '../authentication/local-auth.guard'
 import { JwtAuthGuard } from '../authentication/jwt-auth.guard'
+import * as cookie from 'cookie'
 
 @Controller({
     path: 'users',
@@ -28,7 +29,16 @@ export class UsersController {
             refreshToken: '',
         }
 
-        res.cookie('nekot', secretData, { httpOnly: true })
+        // res.cookie('nekot', secretData, { httpOnly: true })
+        res.setHeader(
+            'Set-Cookie',
+            cookie.serialize('nekot', secretData.token, {
+                httpOnly: true,
+                sameSite: 'none',
+                secure: false,
+                maxAge: 3600,
+            }),
+        )
         return responseJson(accessToken)
     }
 
