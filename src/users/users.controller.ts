@@ -3,7 +3,7 @@ import { UsersService } from './users.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { responseJson } from '../utils/responseJson'
 import { LocalAuthGuard } from '../authentication/local-auth.guard'
-import { AuthenticatedGuard } from '../authentication/authenticated.guard'
+import {JwtAuthGuard} from "../authentication/jwt-auth.guard";
 
 @Controller({
     path: 'users',
@@ -21,7 +21,8 @@ export class UsersController {
     @UseGuards(LocalAuthGuard)
     @Post('login')
     async login(@Request() req) {
-        return responseJson(req.user)
+        const accessToken = await this.service.login(req.user)
+        return responseJson(accessToken)
     }
 
     @Get()
@@ -31,9 +32,10 @@ export class UsersController {
         return responseJson(data)
     }
 
-    @UseGuards(AuthenticatedGuard)
+    @UseGuards(JwtAuthGuard)
     @Get('me')
     async checkMe(@Request() req) {
+        console.log(req.headers)
         return responseJson(req.user)
     }
 

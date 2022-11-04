@@ -4,12 +4,12 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { User, UserQueryMany, UserQueryOne } from './entities/user.entity'
 import { Repository } from 'typeorm'
 import * as bcrypt from 'bcryptjs'
+import { JwtService } from '@nestjs/jwt'
 
 @Injectable()
 export class UsersService {
-    constructor(@InjectRepository(User) private repository: Repository<User>) {}
+    constructor(@InjectRepository(User) private repository: Repository<User>, private jwtService: JwtService) {}
     async create(dto: CreateUserDto) {
-        console.log(dto)
         const usernameExist = await this.findOne({
             where: [{ username: dto.username }],
         })
@@ -44,7 +44,13 @@ export class UsersService {
             throw new HttpException('Wrong credentials provided', HttpStatus.BAD_REQUEST)
         }
 
-        user.password = undefined
         return user
+    }
+
+    async login(user: any) {
+        const payload = { username: user.username, sub: user.id }
+        return {
+            access_token: this.jwtService.sign(payload),
+        }
     }
 }
