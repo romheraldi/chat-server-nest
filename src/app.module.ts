@@ -5,6 +5,7 @@ import { AppService } from './app.service'
 import { MessagesModule } from './messages/messages.module'
 import { UsersModule } from './users/users.module'
 import { AuthenticationModule } from './authentication/authentication.module'
+import { RoomsModule } from './rooms/rooms.module';
 
 @Module({
     imports: [
@@ -21,6 +22,7 @@ import { AuthenticationModule } from './authentication/authentication.module'
         MessagesModule,
         UsersModule,
         AuthenticationModule,
+        RoomsModule,
     ],
     controllers: [AppController],
     providers: [AppService],
