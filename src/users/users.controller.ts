@@ -5,12 +5,13 @@ import { responseJson } from '../utils/responseJson'
 import { LocalAuthGuard } from '../authentication/local-auth.guard'
 import { JwtAuthGuard } from '../authentication/jwt-auth.guard'
 import * as cookie from 'cookie'
+import { RoomsService } from "../rooms/rooms.service";
 
 @Controller({
     path: 'users',
 })
 export class UsersController {
-    constructor(private readonly service: UsersService) {}
+    constructor(private readonly service: UsersService, private readonly roomsService: RoomsService) {}
 
     @Post('register')
     @HttpCode(HttpStatus.CREATED)
@@ -36,7 +37,7 @@ export class UsersController {
                 httpOnly: true,
                 sameSite: 'none',
                 secure: false,
-                maxAge: 3600,
+                maxAge: 365000000,
             }),
         )
         return responseJson(accessToken)
@@ -52,8 +53,20 @@ export class UsersController {
     @UseGuards(JwtAuthGuard)
     @Get('me')
     async checkMe(@Request() req) {
-        console.log(req.headers)
         return responseJson(req.user)
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('my-rooms')
+    async myRooms(@Request() req) {
+        const rooms = await this.roomsService.findAll({
+            where: [
+                {user_id: req.user.id},
+                {another_user_id: req.user.id}
+            ],
+            relations: ['user', 'another_user']
+        })
+        return responseJson(rooms)
     }
 
     @Get(':id')

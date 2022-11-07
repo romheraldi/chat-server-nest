@@ -5,7 +5,7 @@ export default new DataSource({
     type: 'postgres',
     host: 'localhost',
     port: 5432,
-    username: 'root',
+    username: 'postgres',
     password: 'root',
     database: 'chat_app',
     entities: [path.resolve(process.cwd(), 'src', '**', '*.entity{.js,.ts}')],

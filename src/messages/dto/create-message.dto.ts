@@ -1,4 +1,5 @@
 export class CreateMessageDto {
-    name: string
+    room_id: number
     message: string
+    sender_id: number
 }

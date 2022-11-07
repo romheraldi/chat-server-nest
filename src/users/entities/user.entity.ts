@@ -1,13 +1,14 @@
 import {
-    BeforeInsert,
-    BeforeUpdate,
-    Column,
-    Entity,
-    FindManyOptions,
-    FindOneOptions,
-    PrimaryGeneratedColumn
-} from 'typeorm'
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  FindManyOptions,
+  FindOneOptions, OneToMany,
+  PrimaryGeneratedColumn
+} from "typeorm";
 import * as bcrypt from 'bcryptjs'
+import { Room } from "src/rooms/entities/room.entity";
 
 @Entity('users')
 export class User {

@@ -1,5 +1,6 @@
-import { Column, Entity, FindManyOptions, FindOneOptions, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity, FindManyOptions, FindOneOptions, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
 import { User } from '../../users/entities/user.entity'
+import { Message } from "../../messages/entities/message.entity";
 
 @Entity('rooms')
 export class Room {
@@ -7,7 +8,7 @@ export class Room {
     id: number
 
     @Column()
-    name: string
+    socket: string
 
     @Column()
     user_id: number
@@ -22,6 +23,10 @@ export class Room {
     @ManyToOne(() => User, user => user.id)
     @JoinColumn({ name: 'another_user_id' })
     another_user: User
+
+    @OneToMany(() => Message, message => message.room)
+    messages: Message[]
+
 }
 
 export type RoomOneQuery = FindOneOptions<Room>

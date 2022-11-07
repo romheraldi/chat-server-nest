@@ -1,19 +1,31 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { CreateRoomDto } from './dto/create-room.dto'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Room } from './entities/room.entity'
+import { Room, RoomManyQuery, RoomOneQuery } from './entities/room.entity'
 import { Repository } from 'typeorm'
 
 @Injectable()
 export class RoomsService {
     constructor(@InjectRepository(Room) private repository: Repository<Room>) {}
     async create(dto: CreateRoomDto) {
-        const getRandomName = Buffer.from(new Date()).toString('base64')
-
-        dto.name = getRandomName
+        dto.socket = Buffer.from(new Date()).toString('base64')
 
         const data = this.repository.create(dto)
 
         return await this.repository.save(data)
+    }
+
+    async findAll(query?: RoomManyQuery) {
+        return this.repository.find(query)
+    }
+
+    async findOne(query?: RoomOneQuery) {
+        return this.repository.findOne(query)
+    }
+
+    async findOneOrFail(query?: RoomOneQuery) {
+        const data = await this.repository.findOne(query)
+        if (!data) throw new NotFoundException('data not found')
+        return data
     }
 }
