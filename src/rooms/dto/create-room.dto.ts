@@ -1,5 +1,5 @@
 export class CreateRoomDto {
-    socket: string
+    socket?: string
     user_id: number
     another_user_id: number
 }

@@ -1,4 +1,16 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, UseGuards, Request, Res } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+  UseGuards,
+  Request,
+  Res,
+  BadRequestException
+} from "@nestjs/common";
 import { UsersService } from './users.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { responseJson } from '../utils/responseJson'
@@ -67,6 +79,26 @@ export class UsersController {
             relations: ['user', 'another_user']
         })
         return responseJson(rooms)
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('username/:username')
+    async getUsername(@Param('username') username: string, @Request() req) {
+        const user = await this.service.findOneOrFail({
+            where: {username},
+        })
+
+        const rooms = await this.roomsService.findAll({
+            where: [
+                {user_id: req.user.id, another_user_id: user.id},
+                {user_id: user.id, another_user_id: req.user.id}
+            ]
+        })
+
+        if (rooms.length > 0) {
+            throw new BadRequestException("Room sudah terbentuk sebelumnya")
+        }
+        return responseJson(user)
     }
 
     @Get(':id')

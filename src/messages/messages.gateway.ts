@@ -27,11 +27,14 @@ export class MessagesGateway {
     }
 
     @SubscribeMessage('createRoom')
-    async createRoom(@MessageBody() createRoomDto: CreateRoomDto) {
+    async createRoom(@MessageBody() createRoomDto: CreateRoomDto,  @ConnectedSocket() client: Socket) {
         const room = await this.roomsService.create(createRoomDto)
+        const newRoom = await this.roomsService.findOne({where: {id: room.id}, relations: ['user', 'another_user']})
         this.server
             .to([`member-${createRoomDto.another_user_id}`, `member-${createRoomDto.user_id}`])
-            .emit('joinRoom', createRoomDto.socket)
+            .emit('joinRoom', newRoom)
+
+        client.emit('inRoom', room.socket)
         return room
     }
 
@@ -52,12 +55,17 @@ export class MessagesGateway {
 
     @SubscribeMessage('fetchRoomMessages')
     async findAll(@MessageBody() socket: string, @ConnectedSocket() client: Socket) {
-        const room = await this.roomsService.findOne({where: {socket}})
+        console.log(socket)
+        const room = await this.roomsService.findOneOrFail({
+            where: { socket: socket },
+        })
+
+        console.log(room)
 
         client.join(room.socket)
 
         const roomMessages = await this.messagesService.findAll(
-                {where: {room: {id: room.id}}, relations: ['room', 'sender'], order: {created_at: -1}}
+                {where: {room_id:room.id}, relations: ['room', 'sender'], order: {created_at: -1}}
                 )
         client.emit('roomMessages', roomMessages)
 
